@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bradley e a luz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE everyday, learning: calm night-sky explainer, exact figures; second of a series after Rømer
+   IDEA Bradley's zenith-sector logbook, Kew and Wanstead 1725-1728: the eyepiece where Gamma Draconis drifts
+   PICTURE live orbit of the Earth beside the telescope eyepiece, the star tracing its yearly ellipse; N-S curve below
+   COLOUR fixed night ground #0b0e17, starlight ink, sun gold, earth blue, ochre for "expected parallax", light cyan accent
+   TYPE EB Garamond for titles and big figures + Inter for text
+   LAYOUT laptop: orbit left 60%, eyepiece and readouts right; phone: title, orbit, eyepiece, controls */
+:root{color-scheme:dark;--bg:#0b0e17;--bg2:#121725;--line:#262d42;--ink:#e9ecf5;--mut:#a3abc2;--sun:#ffcf5c;--earth:#5b9bff;--jup:#e3a86b;--light:#7fe6ff}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+h1,h2,.big{font-family:"EB Garamond",Georgia,serif;font-weight:600;letter-spacing:-.01em;line-height:1.05;text-wrap:balance}
+h1{font-size:clamp(32px,5vw,50px);margin:0 0 10px}
+h2{font-size:clamp(26px,3.4vw,36px);margin:0 0 12px}
+p{margin:0 0 12px;max-width:68ch}
+.band{padding:clamp(24px,4vw,52px) max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+.lead{color:var(--mut);font-size:17px}
+.lead b{color:var(--ink);font-weight:600}
+.stage{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:20px;margin-top:22px}
+.fig{position:relative;min-height:340px}
+.fig>svg,.fig>canvas{position:absolute;inset:0;width:100%;height:100%}
+.sky{background:radial-gradient(circle at 50% 50%,#171d30 0,#0b0e17 70%);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+#orb{min-height:480px}
+#eye{min-height:0;aspect-ratio:1/1;max-width:300px;margin:0 auto 12px;border-radius:50%}
+.panel{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:18px}
+.ctrls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+button{font:500 15px Inter,sans-serif;color:var(--ink);background:#1b2234;border:1px solid #34405e;border-radius:10px;min-height:44px;padding:0 14px;cursor:pointer}
+button:hover{background:#232c44}
+button:focus-visible,input:focus-visible{outline:2px solid var(--light);outline-offset:2px}
+button.on{background:var(--light);color:#06212b;border-color:var(--light)}
+button.par.on{background:var(--jup);border-color:var(--jup);color:#2a1606}
+label{font-size:14px;color:var(--mut);display:block}
+input[type=range]{width:100%;accent-color:var(--light);height:32px}
+.rd{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px;margin:12px 0}
+.rd div{border-top:1px solid var(--line);padding-top:8px}
+.rd span{display:block;font-size:13px;color:var(--mut)}
+.rd b{font:600 26px "EB Garamond",Georgia,serif;white-space:nowrap}
+.note{font-size:13px;color:var(--mut)}
+#chart{min-height:230px;margin-top:14px}
+svg text{font:13px Inter,sans-serif;fill:var(--mut);paint-order:stroke;stroke:var(--bg);stroke-width:4px}
+.alt{background:var(--bg2);border-block:1px solid var(--line)}
+.rain{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:24px;align-items:start;margin-top:14px}
+#rainF{min-height:360px}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;margin-top:8px}
+.steps svg{width:100%;height:120px;display:block;margin-bottom:10px}
+.steps h3{font:600 20px "EB Garamond",Georgia,serif;margin:0 0 6px}
+.steps p{font-size:15px;color:#c9cfdf}
+.calc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start}
+.field{margin-bottom:16px}
+.field .v{font:600 22px "EB Garamond",Georgia,serif;color:var(--ink);float:right}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.res .big{font-size:clamp(44px,7vw,72px);color:var(--light);white-space:nowrap}
+.res .unit{font-size:18px;color:var(--mut);font-family:Inter,sans-serif}
+.bars{margin:18px 0}
+.bar{display:grid;grid-template-columns:8.5em minmax(0,1fr) 7.5em;gap:10px;align-items:center;margin:8px 0;font-size:14px}
+.bar i{display:block;height:16px;border-radius:4px;background:var(--light)}
+.bar.m i{background:var(--sun)}
+.bar.h i{background:#4a5577}
+.bar em{font-style:normal;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.sum{font-size:15px;background:#0b0e17;border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow-x:auto}
+.sum div{white-space:nowrap}
+.tl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:10px}
+.tl div{border-top:3px solid var(--line);padding-top:10px}
+.tl div.hi{border-color:var(--light)}
+.tl b{font:600 24px "EB Garamond",Georgia,serif;display:block}
+.tl p{font-size:15px;color:#c9cfdf}
+a{color:var(--light)}
+@media(max-width:900px){.stage,.calc,.rain{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:700px){.steps,.tl{grid-template-columns:minmax(0,1fr)}.steps svg{height:100px}}
+@media(max-width:600px){#orb{min-height:360px}.bar{grid-template-columns:6.5em minmax(0,1fr) 6.5em}}
+</style>
+</head>
+<body>
+<header class="band"><div class="wrap">
+<h1>Como uma estrela que “andava errado” revelou a velocidade da luz</h1>
+<p class="lead">De 1725 a 1728, <b>James Bradley</b> e <b>Samuel Molyneux</b> apontaram um telescópio fixo para a estrela <b>Gama do Dragão</b>, que passa quase a pino sobre Londres. Queriam medir a paralaxe. Encontraram outra coisa: a estrela descrevia uma pequena elipse por ano, <b>três meses fora do ritmo</b> que a paralaxe teria. A causa era a soma do movimento da Terra com a velocidade da luz.</p>
+
+<div class="stage">
+ <div class="fig sky" id="orb"><canvas id="cv" aria-label="Órbita da Terra vista de cima, com a direção do seu movimento"></canvas></div>
+ <div class="panel">
+  <div class="fig sky" id="eye"><canvas id="ev" aria-label="Ocular do telescópio mostrando a posição aparente da estrela"></canvas></div>
+  <div class="ctrls">
+   <button id="play" class="on" aria-pressed="true">Pausar</button>
+   <button id="par" class="par" aria-pressed="false">Mostrar paralaxe esperada</button>
+  </div>
+  <label for="spd">Velocidade: <span id="spdv">20</span> dias por segundo</label>
+  <input type="range" id="spd" min="1" max="60" value="20">
+  <label for="day">Data: <span id="dayv">1º jan</span></label>
+  <input type="range" id="day" min="0" max="364" value="0" step="1">
+  <div class="rd">
+   <div><span>Desvio norte–sul</span><b id="rNS" style="color:var(--light)">0,0″</b></div>
+   <div><span>Desvio leste–oeste</span><b id="rEW">0,0″</b></div>
+   <div><span>Inclinação do telescópio</span><b id="rDir">—</b></div>
+   <div><span>Estrela aparece mais ao</span><b id="rPos">—</b></div>
+  </div>
+  <p class="note">Desvios calculados em escala real para Gama do Dragão (latitude eclíptica 75°). Na ocular, a elipse foi ampliada cerca de 10.000 vezes para ficar visível.</p>
+ </div>
+</div>
+
+<div class="fig" id="chart" aria-label="Gráfico do desvio norte-sul da estrela ao longo do ano"><svg id="ch"></svg></div>
+<p class="note">A curva azul é o que Bradley mediu: estrela mais ao sul em março, mais ao norte em setembro, cerca de 40″ de ponta a ponta. A curva tracejada mostra o ritmo que a paralaxe teria, com extremos em dezembro e junho. A paralaxe real de Gama do Dragão é de apenas 0,02″, mil vezes menor, e só seria medida para outra estrela, por Bessel, em 1838.</p>
+</div></header>
+
+<section class="band alt"><div class="wrap">
+<h2>A chuva e o tubo inclinado</h2>
+<p class="lead">Caminhando na chuva, a chuva parece vir de frente, e você inclina o guarda-chuva para a frente. Um tubo que deixe as gotas passarem sem tocar nas paredes precisa estar inclinado pelo ângulo cuja tangente é <b>sua velocidade ÷ velocidade da chuva</b>. Com o telescópio e a luz das estrelas acontece o mesmo.</p>
+<div class="rain">
+ <div class="fig sky" id="rainF"><canvas id="rv" aria-label="Gotas de chuva caindo por um tubo que se move para a direita"></canvas></div>
+ <div class="panel">
+  <div class="field"><label for="walk">Sua velocidade <span class="v" id="walkv"></span></label><input type="range" id="walk" min="0" max="8" step="0.1" value="4"></div>
+  <div class="field"><label for="drop">Velocidade da chuva <span class="v" id="dropv"></span></label><input type="range" id="drop" min="3" max="12" step="0.1" value="8"></div>
+  <div class="field"><label for="tilt">Inclinação do tubo <span class="v" id="tiltv"></span></label><input type="range" id="tilt" min="0" max="60" step="0.5" value="0"></div>
+  <div class="ctrls"><button id="fit">Inclinar no ângulo certo</button><button id="zero">Tubo reto</button></div>
+  <div class="rd">
+   <div><span>Ângulo certo</span><b id="rOk">26,6°</b></div>
+   <div><span>Gotas que atravessam</span><b id="rPass" style="color:var(--light)">—</b></div>
+  </div>
+  <p class="note" id="rLight"></p>
+ </div>
+</div>
+</div></section>
+
+<section class="band"><div class="wrap">
+<h2>O raciocínio de Bradley, em três passos</h2>
+<div class="steps">
+ <div>
+  <svg viewBox="0 0 300 120" aria-hidden="true"><line x1="20" y1="60" x2="280" y2="60" stroke="#262d42"/><polyline points="20,97 31,95 41,89 52,82 63,74 73,64 84,54 95,45 105,36 116,30 127,25 138,22 148,22 159,25 170,30 180,36 191,45 202,54 212,64 223,74 234,82 244,89 255,95 266,97 276,98" fill="none" stroke="#e3a86b" stroke-dasharray="5 5" stroke-width="2"/><polyline points="20,68 31,77 41,85 52,92 63,96 73,98 84,97 95,94 105,89 116,82 127,73 138,63 148,54 159,44 170,36 180,29 191,25 202,22 212,22 223,25 234,30 244,37 255,45 266,55 276,65" fill="none" stroke="#7fe6ff" stroke-width="2.5"/><text x="76" y="114" text-anchor="middle">março: sul</text><text x="209" y="14" text-anchor="middle">setembro: norte</text></svg>
+  <h3>A estrela errou o calendário</h3>
+  <p>Na paralaxe, a estrela se desloca conforme a <i>posição</i> da Terra, com extremos em dezembro e junho. Gama do Dragão teve extremos em março e setembro. Três meses de defasagem: o efeito seguia a <i>velocidade</i> da Terra, que aponta 90° à frente da posição.</p>
+ </div>
+ <div>
+  <svg viewBox="0 0 300 120" aria-hidden="true"><path d="M60 92 L240 92 L220 108 L80 108 Z" fill="#5b9bff" opacity=".7"/><line x1="150" y1="92" x2="150" y2="22" stroke="#e9ecf5" stroke-width="2"/><path d="M152 26 L196 36 L152 46 Z" fill="#7fe6ff"/><path d="M20 70 q10 -6 20 0 t20 0 M20 82 q10 -6 20 0 t20 0" fill="none" stroke="#a3abc2"/><text x="250" y="60" text-anchor="middle">bandeirola</text></svg>
+  <h3>O barco no Tâmisa</h3>
+  <p>Segundo a história contada mais tarde, Bradley viu a bandeirola de um barco mudar de direção cada vez que o barco virava, embora o vento fosse o mesmo. A direção aparente do vento dependia do movimento do barco. O relato pode ser lenda, mas resume a ideia.</p>
+ </div>
+ <div>
+  <svg viewBox="0 0 300 120" aria-hidden="true"><line x1="60" y1="100" x2="60" y2="14" stroke="#7fe6ff" stroke-width="2.5"/><line x1="60" y1="100" x2="250" y2="100" stroke="#5b9bff" stroke-width="2.5"/><line x1="250" y1="100" x2="60" y2="14" stroke="#e9ecf5" stroke-width="1.5" stroke-dasharray="4 4"/><path d="M60 40 A60 60 0 0 1 82 44" fill="none" stroke="#ffcf5c" stroke-width="2"/><text x="46" y="60" text-anchor="end">c</text><text x="155" y="116" text-anchor="middle">velocidade da Terra</text><text x="92" y="36">α</text></svg>
+  <h3>Um triângulo dá a velocidade</h3>
+  <p>O telescópio precisa se inclinar um ângulo α na direção em que a Terra anda, com tan α = v<sub>Terra</sub> ÷ c. Medindo α ≈ 20″, Bradley concluiu que a luz é cerca de 10.210 vezes mais rápida que a Terra em órbita e leva 8 min 12 s para vir do Sol.</p>
+ </div>
+</div>
+</div></section>
+
+<section class="band alt"><div class="wrap">
+<h2>Faça a conta você mesmo</h2>
+<p class="lead">c = velocidade da Terra ÷ tan(ângulo de aberração). Um ângulo de poucos segundos de arco basta: é o tamanho de uma moeda vista a 200 metros.</p>
+<div class="calc" style="margin-top:18px">
+ <div class="panel">
+  <div class="field"><label for="ang">Ângulo de aberração <span class="v" id="angv"></span></label><input type="range" id="ang" min="15" max="25" step="0.01" value="20.2"></div>
+  <div class="field"><label for="vel">Velocidade da Terra na órbita <span class="v" id="velv"></span></label><input type="range" id="vel" min="25" max="35" step="0.01" value="29.78"></div>
+  <label>Pontos de partida</label>
+  <div class="presets">
+   <button data-a="20.2" data-v="29.78">Bradley, 1729</button>
+   <button data-a="20" data-v="29.78">Bradley, “cerca de 20″”</button>
+   <button data-a="20.496" data-v="29.78">Valores modernos</button>
+  </div>
+  <p class="note" style="margin-top:12px">Bradley deu o ângulo entre 20″ e 20,5″ e a razão de 10.210 para 1, que corresponde a cerca de 20,2″. Ele não precisou saber a distância Terra–Sol para achar o tempo de 8 min 12 s; para converter em km/s, sim. Por isso a literatura cita valores entre 301.000 e 304.000 km/s para o resultado dele, conforme a distância usada.</p>
+ </div>
+ <div class="res">
+  <div class="big" id="cOut">—</div>
+  <div class="bars">
+   <div class="bar"><span>Sua estimativa</span><i id="bEst"></i><em id="eEst"></em></div>
+   <div class="bar m"><span>Valor moderno</span><i id="bMod"></i><em>299.792 km/s</em></div>
+   <div class="bar h"><span>Rømer e Huygens, 1690</span><i id="bHuy"></i><em>~220.000 km/s</em></div>
+  </div>
+  <p id="err" style="font-size:17px"></p>
+  <div class="sum" id="sum"></div>
+  <p class="note" style="margin-top:10px">A luz leva hoje 8 min 19 s do Sol à Terra, e é 10.066 vezes mais rápida que a Terra em órbita. A constante de aberração moderna é 20,496″.</p>
+ </div>
+</div>
+</div></section>
+
+<section class="band"><div class="wrap">
+<h2>Por que o número saiu tão bom</h2>
+<p>Rømer dependia de cronometrar eclipses e da distância Terra–Sol, ambos imprecisos. Bradley media um ângulo, com um setor zenital construído por George Graham, preso a uma chaminé e apontado sempre para o mesmo trecho do céu. Como a estrela passava quase a pino, a refração da atmosfera praticamente não atrapalhava. O resultado ficou a cerca de 1,5% do valor moderno.</p>
+<p>A descoberta também foi a primeira prova direta de que a Terra se move em torno do Sol, mais de um século antes da primeira paralaxe estelar. E confirmou, por um método independente, que a luz tem velocidade finita, como Rømer havia proposto 50 anos antes.</p>
+<div class="tl">
+ <div><b>1669</b><p>Robert Hooke afirma ter visto a paralaxe de Gama do Dragão. Verificar essa medição era o objetivo de Molyneux.</p></div>
+ <div><b>Dez. 1725</b><p>Molyneux e Bradley começam a observar a estrela em Kew, perto de Londres, e logo notam que ela se move para o sul.</p></div>
+ <div><b>1727</b><p>Bradley monta outro setor em Wanstead, casa de seu tio James Pound, e vê o mesmo efeito em várias estrelas.</p></div>
+ <div class="hi"><b>Jan. 1729</b><p>A carta de Bradley a Edmond Halley, explicando a aberração, é lida na Royal Society e publicada nas <i>Philosophical Transactions</i>.</p></div>
+ <div><b>1748</b><p>Depois de 18 anos de observações, Bradley anuncia a nutação, o leve balanço do eixo da Terra causado pela Lua.</p></div>
+ <div><b>1838</b><p>Friedrich Bessel mede enfim uma paralaxe estelar, a de 61 do Cisne: cerca de 0,3″.</p></div>
+</div>
+</div></section>
+
+<script>
+{
+const $=id=>document.getElementById(id);
+const fmt=(x,d)=>x.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
+const K=20.496,BETA=75*Math.PI/180,SB=Math.sin(BETA),YEAR=365.2422;
+const MES=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'],M0=[0,31,59,90,120,151,181,212,243,273,304,334];
+const dateStr=d=>{d=Math.floor(d)%365;let m=11;while(M0[m]>d)m--;const n=d-M0[m]+1;return(n===1?'1º':n)+' '+MES[m]};
+const lamS=d=>2*Math.PI*(d-79)/YEAR; // longitude do Sol, 0 no equinócio de março
+const ab=d=>{const l=lamS(d);return[K*Math.sin(l),-K*SB*Math.cos(l)]}; // [leste, norte] em ″
+const px=d=>{const l=lamS(d);return[Math.cos(l),SB*Math.sin(l)]}; // paralaxe, forma normalizada
+let t=0,playing=true,last=null,showPar=false;
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const stars=[];{let s=11;for(let i=0;i<140;i++){s=s*16807%2147483647;const x=s/2147483647;s=s*16807%2147483647;const y=s/2147483647;s=s*16807%2147483647;stars.push([x,y,0.3+(s/2147483647)*1.1])}}
+function fit(c,box){const r=box.getBoundingClientRect(),dpr=window.devicePixelRatio||1;c.width=r.width*dpr;c.height=r.height*dpr;c.getContext('2d').setTransform(dpr,0,0,dpr,0,0)}
+const cv=$('cv'),ctx=cv.getContext('2d'),orb=$('orb'),ev=$('ev'),ectx=ev.getContext('2d'),eye=$('eye');
+const ro1=new ResizeObserver(()=>{fit(cv,orb);fit(ev,eye);draw()});ro1.observe(orb);ro1.observe(eye);
+const lab=(c,s,x,y,col,al)=>{c.font='13px Inter,sans-serif';c.lineWidth=4;c.strokeStyle='#0b0e17';c.textAlign=al||'left';c.fillStyle=col;c.strokeText(s,x,y);c.fillText(s,x,y);c.textAlign='left'};
+function arrow(c,x1,y1,x2,y2,col){const a=Math.atan2(y2-y1,x2-x1);c.strokeStyle=col;c.fillStyle=col;c.lineWidth=2.5;c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke();c.beginPath();c.moveTo(x2,y2);c.lineTo(x2-10*Math.cos(a-.4),y2-10*Math.sin(a-.4));c.lineTo(x2-10*Math.cos(a+.4),y2-10*Math.sin(a+.4));c.fill()}
+function drawOrbit(){
+ const W=orb.clientWidth,H=orb.clientHeight;if(!W)return;ctx.clearRect(0,0,W,H);
+ for(const s of stars){ctx.fillStyle='rgba(233,236,245,.45)';ctx.fillRect(s[0]*W,s[1]*H,s[2],s[2])}
+ const cx=W/2,cy=H/2+6,R=Math.min(W,H)/2-60;
+ ctx.setLineDash([3,5]);ctx.strokeStyle='#33405f';ctx.lineWidth=1;ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.stroke();ctx.setLineDash([]);
+ // meses ao redor da órbita
+ for(let m=0;m<12;m++){const L=lamS(M0[m])+Math.PI,x=cx+Math.cos(L)*(R+22),y=cy-Math.sin(L)*(R+22);ctx.fillStyle='#33405f';ctx.beginPath();ctx.arc(cx+Math.cos(L)*R,cy-Math.sin(L)*R,2,0,7);ctx.fill();lab(ctx,MES[m],x,y+4,'#a3abc2','center')}
+ const g=ctx.createRadialGradient(cx,cy,2,cx,cy,30);g.addColorStop(0,'#fff3c4');g.addColorStop(.35,'#ffcf5c');g.addColorStop(1,'rgba(255,207,92,0)');
+ ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,30,0,7);ctx.fill();lab(ctx,'Sol',cx,cy+44,'#ffcf5c','center');
+ const L=lamS(t)+Math.PI,ex=cx+Math.cos(L)*R,ey=cy-Math.sin(L)*R,va=L+Math.PI/2;
+ if(showPar){ctx.strokeStyle='rgba(227,168,107,.6)';ctx.setLineDash([4,4]);ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(ex,ey);ctx.lineTo(cx,cy);ctx.stroke();ctx.setLineDash([])}
+ arrow(ctx,ex,ey,ex+Math.cos(va)*R*.42,ey-Math.sin(va)*R*.42,'#7fe6ff');
+ ctx.fillStyle='#5b9bff';ctx.beginPath();ctx.arc(ex,ey,7,0,7);ctx.fill();
+ const ox=Math.cos(L)>0?14:-14;lab(ctx,'Terra',ex+ox,ey+(Math.sin(L)>0?-12:22),'#5b9bff',ox>0?'left':'right');
+ const nx=Math.cos(va)*R*.3+Math.cos(L)*26,ny=-Math.sin(va)*R*.3-Math.sin(L)*26;lab(ctx,'30 km/s',ex+nx,ey+ny+4,'#7fe6ff','center');
+ lab(ctx,'Gama do Dragão fica “acima” do desenho',12,22,'#a3abc2');
+}
+function drawEye(){
+ const W=eye.clientWidth,H=eye.clientHeight;if(!W)return;ectx.clearRect(0,0,W,H);
+ const cx=W/2,cy=H/2,S=(W/2-34)/K;
+ ectx.strokeStyle='#262d42';ectx.lineWidth=1;ectx.beginPath();ectx.moveTo(cx,10);ectx.lineTo(cx,H-10);ectx.moveTo(10,cy);ectx.lineTo(W-10,cy);ectx.stroke();
+ lab(ectx,'N',cx,20,'#a3abc2','center');lab(ectx,'S',cx,H-8,'#a3abc2','center');lab(ectx,'L',16,cy-6,'#a3abc2','center');lab(ectx,'O',W-16,cy-6,'#a3abc2','center');
+ const P=(e,n)=>[cx-e*S,cy-n*S];
+ ectx.strokeStyle='rgba(127,230,255,.35)';ectx.lineWidth=1.5;ectx.beginPath();for(let i=0;i<=120;i++){const q=P(...ab(i*YEAR/120));i?ectx.lineTo(...q):ectx.moveTo(...q)}ectx.stroke();
+ if(showPar){const pa=px(t),q=P(pa[0]*K*.8,pa[1]*K*.8);ectx.strokeStyle='rgba(227,168,107,.35)';ectx.setLineDash([3,4]);ectx.beginPath();ectx.ellipse(cx,cy,K*.8*S,K*.8*SB*S,0,0,7);ectx.stroke();ectx.setLineDash([]);ectx.fillStyle='#e3a86b';ectx.beginPath();ectx.arc(q[0],q[1],5,0,7);ectx.fill()}
+ const a=ab(t),q=P(a[0],a[1]),gl=ectx.createRadialGradient(q[0],q[1],0,q[0],q[1],14);gl.addColorStop(0,'rgba(255,255,255,1)');gl.addColorStop(.25,'rgba(127,230,255,.9)');gl.addColorStop(1,'rgba(127,230,255,0)');
+ ectx.fillStyle=gl;ectx.beginPath();ectx.arc(q[0],q[1],14,0,7);ectx.fill();
+ ectx.fillStyle='#e9ecf5';ectx.beginPath();ectx.arc(cx,cy,1.6,0,7);ectx.fill();
+}
+function readouts(){
+ const a=ab(t);$('rNS').textContent=(a[1]>=0?'+':'−')+fmt(Math.abs(a[1]),1)+'″';$('rEW').textContent=(a[0]>=0?'+':'−')+fmt(Math.abs(a[0]),1)+'″';
+ const ns=a[1]<-3?'sul':a[1]>3?'norte':'',ew=a[0]>3?'leste':a[0]<-3?'oeste':'';
+ $('rPos').textContent=ns&&ew?ns+'/'+ew:(ns||ew||'centro');
+ $('rDir').textContent=fmt(Math.hypot(a[0],a[1]),1)+'″';
+ $('dayv').textContent=dateStr(t);if(document.activeElement!==$('day'))$('day').value=Math.floor(t%365);
+}
+const chS=$('ch'),chBox=$('chart');
+function chart(){
+ const W=chBox.clientWidth,H=chBox.clientHeight;if(!W)return;
+ const L=46,R=16,T=20,B=30,ym=24,X=d=>L+(W-L-R)*d/365,Y=v=>T+(H-T-B)*(1-(v+ym)/(2*ym));
+ let pa='',pp='';for(let i=0;i<=146;i++){const d=365*i/146;pa+=(i?'L':'M')+X(d).toFixed(1)+' '+Y(ab(d)[1]).toFixed(1);pp+=(i?'L':'M')+X(d).toFixed(1)+' '+Y(px(d)[1]*K).toFixed(1)}
+ const cur=t%365,narrow=W<520;
+ chS.innerHTML=[-20,-10,0,10,20].map(v=>`<line x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}" stroke="${v?'#1e2538':'#33405f'}"/><text x="${L-8}" y="${Y(v)+4}" text-anchor="end">${v>0?'+':''}${v}″</text>`).join('')+
+  MES.map((m,i)=>(narrow&&i%3)?'':`<text x="${X(M0[i]+15)}" y="${H-10}" text-anchor="middle">${m}</text>`).join('')+
+  `<path d="${pp}" fill="none" stroke="#e3a86b" stroke-width="2" stroke-dasharray="6 5" opacity="${showPar?1:.55}"/><path d="${pa}" fill="none" stroke="#7fe6ff" stroke-width="2.5"/>`+
+  `<text x="${L+4}" y="${T-6}">norte ↑</text><text x="${X(79)}" y="${Y(-SB*K)+20}" text-anchor="middle" style="fill:#7fe6ff">sul máximo em março</text>`+
+  (narrow?'':`<text x="${X(355)}" y="${Y(-SB*K)-8}" text-anchor="end" style="fill:#e3a86b">paralaxe: dezembro</text>`)+
+  `<line x1="${X(cur)}" x2="${X(cur)}" y1="${T}" y2="${H-B}" stroke="#5b9bff" stroke-width="1.5"/><circle cx="${X(cur)}" cy="${Y(ab(cur)[1])}" r="5" fill="#5b9bff" stroke="#0b0e17" stroke-width="2"/>`;
+}
+const ro2=new ResizeObserver(chart);ro2.observe(chBox);
+function draw(){drawOrbit();drawEye();readouts();chart()}
+$('play').onclick=()=>{playing=!playing;$('play').textContent=playing?'Pausar':'Continuar';$('play').classList.toggle('on',playing);$('play').setAttribute('aria-pressed',playing)};
+$('par').onclick=()=>{showPar=!showPar;$('par').classList.toggle('on',showPar);$('par').setAttribute('aria-pressed',showPar);$('par').textContent=showPar?'Esconder paralaxe esperada':'Mostrar paralaxe esperada';draw()};
+$('spd').oninput=()=>{$('spdv').textContent=$('spd').value};
+$('day').oninput=()=>{t=Number($('day').value);draw()};
+// chuva
+const rv=$('rv'),rctx=rv.getContext('2d'),rainF=$('rainF'),walk=$('walk'),drop=$('drop'),tilt=$('tilt');
+const ro3=new ResizeObserver(()=>fit(rv,rainF));ro3.observe(rainF);
+let drops=[],hist=[],gx=0;
+function rainStep(dt){
+ const W=rainF.clientWidth,H=rainF.clientHeight;if(!W)return;
+ const v=Number(walk.value),u=Number(drop.value),th=Number(tilt.value)*Math.PI/180,sc=H/9; // px por metro, passos de 1 s ~ 9 m
+ const top=H*.28,bot=H*.84,w=22,cx=W/2;
+ const axisX=y=>cx+Math.tan(th)*(bot-y);
+ for(let i=0;i<Math.round(dt*160);i++)drops.push({x:Math.random()*(W+v*sc*2),y:-10,s:0});
+ for(const d of drops){if(d.s===2){d.life-=dt;continue}d.x-=v*sc*dt;d.y+=u*sc*dt;
+  if(d.s===0&&d.y>=top&&d.y<top+u*sc*dt+1&&Math.abs(d.x-axisX(d.y))<w-2)d.s=1;
+  if(d.s===1){if(Math.abs(d.x-axisX(d.y))>w-2){d.s=2;d.life=.5;hist.push(0)}else if(d.y>bot){d.s=3;hist.push(1)}}}
+ drops=drops.filter(d=>d.y<H+10&&d.x>-20&&(d.s!==2||d.life>0));if(hist.length>60)hist=hist.slice(-60);
+ gx=(gx+v*sc*dt)%40;
+ rctx.clearRect(0,0,W,H);
+ rctx.strokeStyle='#33405f';rctx.lineWidth=1;rctx.beginPath();rctx.moveTo(0,bot+18);rctx.lineTo(W,bot+18);rctx.stroke();
+ for(let x=-gx;x<W;x+=40){rctx.beginPath();rctx.moveTo(x,bot+18);rctx.lineTo(x-8,bot+26);rctx.stroke()}
+ for(const d of drops){rctx.strokeStyle=d.s===2?'rgba(163,171,194,.6)':d.s===1?'#7fe6ff':'rgba(127,230,255,.45)';rctx.lineWidth=d.s===1?2:1.3;
+  const n=Math.hypot(v,u)||1,lx=-v/n*7,ly=u/n*7;rctx.beginPath();if(d.s===2){rctx.arc(d.x,d.y,2,0,7);rctx.stroke()}else{rctx.moveTo(d.x-lx,d.y-ly);rctx.lineTo(d.x,d.y);rctx.stroke()}}
+ // tubo
+ rctx.strokeStyle='#e9ecf5';rctx.lineWidth=3;
+ for(const sx of[-w,w]){rctx.beginPath();rctx.moveTo(axisX(top)+sx,top);rctx.lineTo(axisX(bot)+sx,bot);rctx.stroke()}
+ rctx.fillStyle='#5b9bff';rctx.beginPath();rctx.arc(cx,bot+8,7,0,7);rctx.fill();
+ arrow(rctx,cx+24,bot+8,cx+24+Math.max(4,v*9),bot+8,'#5b9bff');
+ lab(rctx,'você anda para a direita',12,22,'#a3abc2');
+}
+function rainText(){
+ const v=Number(walk.value),u=Number(drop.value),ok=Math.atan2(v,u)*180/Math.PI;
+ $('walkv').textContent=fmt(v,1)+' m/s';$('dropv').textContent=fmt(u,1)+' m/s';$('tiltv').textContent=fmt(Number(tilt.value),1)+'°';$('rOk').textContent=fmt(ok,1)+'°';
+ $('rLight').textContent='Para a luz das estrelas: a Terra anda a 29,8 km/s e a luz a 299.792 km/s. O ângulo certo é arctan(29,8 ÷ 299.792) = 20,5″, ou 0,0057°. Pequeno, mas mensurável.';
+}
+function rainPass(){$('rPass').textContent=hist.length<8?'—':fmt(100*hist.reduce((a,b)=>a+b,0)/hist.length,0)+'%'}
+[walk,drop,tilt].forEach(e=>e.addEventListener('input',()=>{hist=[];rainText()}));
+$('fit').onclick=()=>{tilt.value=(Math.atan2(Number(walk.value),Number(drop.value))*180/Math.PI).toFixed(1);hist=[];rainText()};
+$('zero').onclick=()=>{tilt.value=0;hist=[];rainText()};
+rainText();
+let rt=0;
+function frame(now){
+ const dt=last===null?0:Math.min(.05,(now-last)/1000);last=now;
+ if(playing){t=(t+dt*Number($('spd').value))%365}
+ draw();if(!reduce||dt===0)rainStep(reduce?0:dt);rt+=dt;if(rt>.4){rainPass();rt=0}
+ requestAnimationFrame(frame);
+}
+if(reduce){playing=false;$('play').textContent='Continuar';$('play').classList.remove('on');t=79}
+requestAnimationFrame(frame);
+// calculadora
+const ang=$('ang'),vel=$('vel'),C=299792.458,SEC=Math.PI/180/3600,PY=365.25636*86400;
+function calc(){
+ const a=Number(ang.value),v=Number(vel.value),ta=Math.tan(a*SEC),c=v/ta,ratio=1/ta,lt=PY/(2*Math.PI*ratio),pct=(c/C-1)*100;
+ $('angv').textContent=fmt(a,2)+'″';$('velv').textContent=fmt(v,2)+' km/s';
+ $('cOut').innerHTML=fmt(Math.round(c/1000)*1000,0)+' <span class="unit">km/s</span>';
+ const mx=Math.max(c,C)*1.05;$('bEst').style.width=(c/mx*100)+'%';$('bMod').style.width=(C/mx*100)+'%';$('bHuy').style.width=(220000/mx*100)+'%';
+ $('eEst').textContent=fmt(Math.round(c),0)+' km/s';
+ $('err').textContent=Math.abs(pct)<.2?'Praticamente o valor moderno.':`${fmt(Math.abs(pct),1)}% ${pct<0?'abaixo':'acima'} do valor moderno.`;
+ const m=Math.floor(lt/60),s=Math.round(lt-m*60);
+ $('sum').innerHTML=`<div>c = ${fmt(v,2)} km/s ÷ tan(${fmt(a,2)}″) = ${fmt(Math.round(c),0)} km/s</div><div>razão c ÷ v = ${fmt(Math.round(ratio),0)}</div><div>luz do Sol até a Terra: ${m} min ${s} s</div>`;
+}
+ang.oninput=calc;vel.oninput=calc;
+document.querySelectorAll('.presets button').forEach(b=>b.onclick=()=>{ang.value=b.dataset.a;vel.value=b.dataset.v;calc()});
+calc();
+}
+</script>
+</body>
+</html>

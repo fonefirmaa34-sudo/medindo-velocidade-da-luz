@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Medindo a velocidade da Luz</title>
+<meta name="description" content="Cinco experimentos interativos que mediram a velocidade da luz, de Rømer (1676) a Michelson (anos 1920).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#0b0e17;--bg2:#121725;--bg3:#182036;--line:#262d42;--ink:#e9ecf5;--mut:#a3abc2;--sun:#ffcf5c;--light:#7fe6ff}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.6 Inter,system-ui,sans-serif;overflow-x:clip}
+h1,h2,.serif{font-family:"EB Garamond",Georgia,serif;font-weight:600;letter-spacing:-.01em;line-height:1.05}
+.wrap{max-width:1200px;margin:0 auto;padding:0 20px}
+header{padding:56px 0 28px;background:radial-gradient(ellipse at 20% 0%,#1a2340 0%,transparent 60%)}
+h1{font-size:clamp(38px,6vw,64px);margin:0 0 18px;text-wrap:balance}
+h1 span{color:var(--light)}
+.intro{display:grid;grid-template-columns:1.4fr 1fr;gap:36px;align-items:start}
+.intro p{margin:0 0 14px;max-width:68ch;color:#d4d9e8}
+.c{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+.c .k{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin-bottom:6px}
+.c .big{font-family:"EB Garamond",Georgia,serif;font-size:clamp(34px,4vw,46px);color:var(--light);line-height:1;font-variant-numeric:tabular-nums}
+.c .u{color:var(--mut);font-size:15px}
+.tl{margin:16px 0 0;padding:0;list-style:none;font-size:14.5px}
+.tl li{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-top:1px solid var(--line);font-variant-numeric:tabular-nums}
+.tl li b{font-weight:500}
+.tl li span{color:var(--mut)}
+main{padding:12px 0 60px}
+h2{font-size:clamp(26px,3.4vw,34px);margin:24px 0 6px}
+.hint{color:var(--mut);margin:0 0 18px}
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;position:relative}
+.card{appearance:none;font:inherit;color:inherit;text-align:left;cursor:pointer;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:16px 16px 14px;display:flex;flex-direction:column;gap:4px;transition:background .2s,border-color .2s,transform .2s}
+.card:hover{background:var(--bg3);border-color:#3a4566;transform:translateY(-2px)}
+.card:focus-visible{outline:2px solid var(--light);outline-offset:2px}
+.card .n{font-size:12px;color:var(--mut);letter-spacing:.08em}
+.card .yr{font-family:"EB Garamond",Georgia,serif;font-size:34px;line-height:1;color:var(--sun);font-variant-numeric:tabular-nums}
+.card .who{font-weight:600;font-size:17px}
+.card .what{font-size:13.5px;color:var(--mut);line-height:1.4}
+.card[aria-current="true"]{border-color:var(--light);background:var(--bg3)}
+/* open state: cards shrink into a strip */
+.open .cards{grid-template-columns:repeat(5,1fr) auto}
+.open .card{padding:9px 12px;flex-direction:row;align-items:baseline;gap:8px;transform:none}
+.open .card .n,.open .card .what{display:none}
+.open .card .yr{font-size:20px}
+.open .card .who{font-size:15px}
+.close{display:none;appearance:none;font:inherit;font-size:14px;cursor:pointer;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:12px;padding:0 14px}
+.close:hover{border-color:var(--mut)}
+.open .close{display:block}
+#stage{display:none;margin-top:14px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--bg)}
+.open #stage{display:block;animation:grow .35s ease}
+@keyframes grow{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+#stage iframe{display:block;width:100%;height:80vh;border:0;background:var(--bg)}
+.nav{display:none;justify-content:space-between;gap:12px;margin-top:14px}
+.open .nav{display:flex}
+.nav a{color:var(--light);text-decoration:none;font-size:15px}
+.nav a:hover{text-decoration:underline}
+footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--mut);font-size:14px}
+@media (max-width:900px){
+ .intro{grid-template-columns:1fr;gap:20px}
+ .cards{grid-template-columns:repeat(2,1fr)}
+ .cards .card:last-of-type{grid-column:span 2}
+ .open .cards{grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+ .open .cards .card:last-of-type{grid-column:auto}
+ .open .card{flex-direction:column;align-items:flex-start;gap:0;padding:8px}
+ .open .card .who{font-size:12.5px;overflow:hidden;text-overflow:ellipsis;max-width:100%;white-space:nowrap}
+ .open .card .yr{font-size:17px}
+ .open .card .fn{display:none}
+ .open .close{grid-column:1/-1;padding:8px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+ <h1>Medindo a velocidade da <span>Luz</span></h1>
+ <div class="intro">
+  <div>
+   <p>Durante séculos se discutiu se a luz chegava instantaneamente ou se levava algum tempo para viajar. A primeira resposta veio do céu: em <b>1676</b>, no Observatório de Paris, o dinamarquês <b>Ole Rømer</b> percebeu que os eclipses de Io, uma lua de Júpiter, atrasavam quando a Terra estava longe do planeta. A luz tinha velocidade, e a estimativa feita com os seus dados ficou perto de <b>220.000 km/s</b>.</p>
+   <p>Em <b>1728</b>, o inglês <b>James Bradley</b> descobriu a aberração da luz: as estrelas parecem se deslocar porque a Terra corre na sua órbita enquanto a luz cai sobre ela, o que deu um valor bem mais próximo do real. Em <b>1849</b>, <b>Hippolyte Fizeau</b> mediu a luz pela primeira vez na Terra, com uma roda dentada e um espelho a 8,6 km. Em <b>1862</b>, <b>Léon Foucault</b> usou um espelho girante dentro de uma sala e chegou a cerca de <b>298.000 km/s</b>.</p>
+   <p>Nos <b>anos 1920</b>, <b>Albert Michelson</b> mandou a luz ida e volta entre duas montanhas da Califórnia e obteve <b>299.796 km/s</b>. Desde <b>1983</b> a velocidade da luz não é mais medida: ela é <b>exata por definição</b>, e é o metro que passou a ser definido a partir dela.</p>
+  </div>
+  <div class="c">
+   <div class="k">Velocidade da luz no vácuo, desde 1983</div>
+   <div class="big">299.792.458</div>
+   <div class="u">metros por segundo, valor exato</div>
+   <ul class="tl">
+    <li><b>Rømer, 1676</b><span>≈ 220.000 km/s</span></li>
+    <li><b>Bradley, 1728</b><span>≈ 301.000 a 304.000 km/s</span></li>
+    <li><b>Fizeau, 1849</b><span>≈ 313.000 km/s</span></li>
+    <li><b>Foucault, 1862</b><span>≈ 298.000 km/s</span></li>
+    <li><b>Michelson, anos 1920</b><span>≈ 299.796 km/s</span></li>
+   </ul>
+  </div>
+ </div>
+</div></header>
+
+<main class="wrap" id="app">
+ <h2>Os experimentos</h2>
+ <p class="hint">Escolha um experimento para abrir a simulação e as explicações.</p>
+ <div class="cards" role="list">
+  <button class="card" data-id="romer"><span class="n">1</span><span class="yr">1676</span><span class="who"><span class="fn">Ole </span>Rømer</span><span class="what">Os eclipses de Io, lua de Júpiter</span></button>
+  <button class="card" data-id="bradley"><span class="n">2</span><span class="yr">1728</span><span class="who"><span class="fn">James </span>Bradley</span><span class="what">A aberração da luz das estrelas</span></button>
+  <button class="card" data-id="fizeau"><span class="n">3</span><span class="yr">1849</span><span class="who"><span class="fn">Hippolyte </span>Fizeau</span><span class="what">Roda dentada e espelho a 8,6 km</span></button>
+  <button class="card" data-id="foucault"><span class="n">4</span><span class="yr">1862</span><span class="who"><span class="fn">Léon </span>Foucault</span><span class="what">O espelho girante</span></button>
+  <button class="card" data-id="michelson"><span class="n">5</span><span class="yr">1926</span><span class="who"><span class="fn">Albert </span>Michelson</span><span class="what">Espelho octogonal entre duas montanhas</span></button>
+  <button class="close" id="close" aria-label="Fechar experimento">✕ Fechar</button>
+ </div>
+ <div id="stage"><iframe id="frame" title="Experimento" loading="lazy"></iframe></div>
+ <div class="nav"><a href="#" id="prev"></a><a href="#" id="next"></a></div>
+</main>
+
+<footer><div class="wrap">Simulações interativas em português sobre a história da medição da velocidade da luz.</div></footer>
+
+<script>
+const ids=['romer','bradley','fizeau','foucault','michelson'];
+const names={romer:'Rømer, 1676',bradley:'Bradley, 1728',fizeau:'Fizeau, 1849',foucault:'Foucault, 1862',michelson:'Michelson, 1926'};
+const app=document.getElementById('app'),frame=document.getElementById('frame'),cards=[...document.querySelectorAll('.card')];
+const prev=document.getElementById('prev'),next=document.getElementById('next');
+let ro=null,cur=null;
+function fit(){
+  try{const d=frame.contentDocument;if(!d||!d.body)return;
+    const h=Math.max(d.documentElement.scrollHeight,d.body.scrollHeight);
+    if(h>0)frame.style.height=h+'px';}catch(e){}
+}
+frame.addEventListener('load',()=>{
+  if(ro){ro.disconnect();ro=null}
+  try{const d=frame.contentDocument;fit();
+    ro=new ResizeObserver(fit);ro.observe(d.body);
+    d.querySelectorAll('a[href^="http"]').forEach(a=>a.target='_blank');
+  }catch(e){frame.style.height='85vh'}
+});
+function show(id){
+  if(!ids.includes(id)){
+    app.classList.remove('open');cur=null;frame.removeAttribute('src');
+    cards.forEach(c=>c.removeAttribute('aria-current'));
+    document.title='Medindo a velocidade da Luz';return;
+  }
+  const first=!app.classList.contains('open');
+  app.classList.add('open');
+  cards.forEach(c=>c.setAttribute('aria-current',c.dataset.id===id));
+  if(cur!==id){cur=id;frame.src=id+'/index.html';}
+  const i=ids.indexOf(id);
+  prev.textContent=i>0?'← '+names[ids[i-1]]:'';prev.href=i>0?'#'+ids[i-1]:'#';prev.style.visibility=i>0?'visible':'hidden';
+  next.textContent=i<4?names[ids[i+1]]+' →':'';next.href=i<4?'#'+ids[i+1]:'#';next.style.visibility=i<4?'visible':'hidden';
+  document.title=names[id]+' · Medindo a velocidade da Luz';
+  requestAnimationFrame(()=>document.querySelector('.cards').scrollIntoView({behavior:first?'smooth':'auto',block:'start'}));
+}
+cards.forEach(c=>c.addEventListener('click',()=>{location.hash=c.dataset.id}));
+document.getElementById('close').addEventListener('click',()=>{history.pushState(null,'',location.pathname);show(null);document.getElementById('app').scrollIntoView({block:'start'})});
+window.addEventListener('hashchange',()=>show(location.hash.slice(1)));
+show(location.hash.slice(1));
+</script>
+</body>
+</html>

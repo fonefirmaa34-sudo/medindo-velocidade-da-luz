@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Foucault e a luz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE everyday, learning: calm night-sky explainer, exact figures; fourth of a series after Rømer, Bradley and Fizeau
+   IDEA Foucault's rotating mirror, 1850 (air against water) and 1862 (298,000 km/s inside the Paris Observatory)
+   PICTURE live top view: slit, plate, lens, spinning mirror, a 20 m path folded by five concave mirrors; eyepiece micrometer with the real shift
+   COLOUR fixed night ground #0b0e17, starlight ink, sun gold, mirror silver, light cyan accent, ochre for Foucault's own numbers, water green
+   TYPE EB Garamond for titles and big figures + Inter for text
+   LAYOUT laptop: scene left 60%, eyepiece and controls right; phone: title, scene, eyepiece, controls */
+:root{color-scheme:dark;--bg:#0b0e17;--bg2:#121725;--line:#262d42;--ink:#e9ecf5;--mut:#a3abc2;--sun:#ffcf5c;--earth:#5b9bff;--jup:#e3a86b;--light:#7fe6ff;--water:#6fdc9c}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+h1,h2,.big{font-family:"EB Garamond",Georgia,serif;font-weight:600;letter-spacing:-.01em;line-height:1.05;text-wrap:balance}
+h1{font-size:clamp(32px,5vw,50px);margin:0 0 10px}
+h2{font-size:clamp(26px,3.4vw,36px);margin:0 0 12px}
+p{margin:0 0 12px;max-width:68ch}
+.band{padding:clamp(24px,4vw,52px) max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+.lead{color:var(--mut);font-size:17px}
+.lead b{color:var(--ink);font-weight:600}
+.stage{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:20px;margin-top:22px}
+.fig{position:relative;min-height:340px}
+.fig>svg,.fig>canvas{position:absolute;inset:0;width:100%;height:100%}
+.sky{background:linear-gradient(#0e1322,#0b0e17 70%);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+#scene{min-height:470px}
+.panel{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:18px}
+#ocw{position:relative;height:112px;border:1px solid var(--line);border-radius:12px;background:#05070c;margin-bottom:8px;overflow:hidden}
+#ocw canvas{position:absolute;inset:0;width:100%;height:100%}
+#ocT{font-size:15px;color:var(--mut);margin:0 0 14px}
+#ocT b{color:var(--ink)}
+.ctrls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.seg{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.seg button{flex:1 1 9em}
+button{font:500 15px Inter,sans-serif;color:var(--ink);background:#1b2234;border:1px solid #34405e;border-radius:10px;min-height:44px;padding:0 14px;cursor:pointer}
+button:hover{background:#232c44}
+button:focus-visible,input:focus-visible{outline:2px solid var(--light);outline-offset:2px}
+button.on{background:var(--light);color:#06212b;border-color:var(--light)}
+label{font-size:14px;color:var(--mut);display:block}
+input[type=range]{width:100%;accent-color:var(--light);height:32px}
+.rd{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px;margin:12px 0}
+.rd div{border-top:1px solid var(--line);padding-top:8px}
+.rd span{display:block;font-size:13px;color:var(--mut)}
+.rd b{font:600 26px "EB Garamond",Georgia,serif;white-space:nowrap}
+.note{font-size:13px;color:var(--mut)}
+svg text{font:13px Inter,sans-serif;fill:var(--mut);paint-order:stroke;stroke:var(--bg2);stroke-width:4px}
+.alt{background:var(--bg2);border-block:1px solid var(--line)}
+.alt .panel{background:var(--bg)}
+.aux{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:24px;align-items:start;margin-top:14px}
+#curve{min-height:320px;cursor:crosshair;touch-action:none}
+#zoom{width:100%;height:120px;display:block;margin:6px 0 10px}
+#zoom text{stroke:var(--bg)}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;margin-top:8px}
+.steps svg{width:100%;height:120px;display:block;margin-bottom:10px}
+.steps svg text,#cs text{stroke:var(--bg)}
+.steps h3{font:600 20px "EB Garamond",Georgia,serif;margin:0 0 6px}
+.steps p{font-size:15px;color:#c9cfdf}
+.calc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start}
+.field{margin-bottom:16px}
+.field .v{font:600 22px "EB Garamond",Georgia,serif;color:var(--ink);float:right}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.res .big{font-size:clamp(44px,7vw,72px);color:var(--light);white-space:nowrap}
+.res .unit{font-size:18px;color:var(--mut);font-family:Inter,sans-serif}
+.bars{margin:18px 0}
+.bar{display:grid;grid-template-columns:8.5em minmax(0,1fr) 7.5em;gap:10px;align-items:center;margin:8px 0;font-size:14px}
+.bar i{display:block;height:16px;border-radius:4px;background:var(--light)}
+.bar.m i{background:var(--sun)}
+.bar.f i{background:#8d9ac0}
+.bar.b i{background:#6f7da3}
+.bar.h i{background:#4a5577}
+.bar em{font-style:normal;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.sum{font-size:15px;background:#0b0e17;border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow-x:auto}
+.sum div{margin:2px 0}
+#au{font-size:15px;color:#c9cfdf;margin-top:14px}
+#au b{color:var(--ink)}
+.tl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:10px}
+.tl div{border-top:3px solid var(--line);padding-top:10px}
+.tl div.hi{border-color:var(--light)}
+.tl b{font:600 24px "EB Garamond",Georgia,serif;display:block}
+.tl p{font-size:15px;color:#c9cfdf}
+.fix{margin:26px 0 8px}
+.fix h3,.srch{font:600 20px "EB Garamond",Georgia,serif;margin:0 0 8px}
+.fix ul{margin:0;padding-left:1.2em;font-size:15px;color:#c9cfdf}
+.fix li{margin:8px 0;max-width:80ch}
+.fix li b{color:var(--ink)}
+.src{font-size:14px;color:var(--mut);padding-left:1.2em;margin:8px 0 0}
+.src li{margin:4px 0}
+a{color:var(--light)}
+@media(max-width:900px){.stage,.calc,.aux{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:700px){.steps,.tl{grid-template-columns:minmax(0,1fr)}.steps svg{height:100px}}
+@media(max-width:600px){#scene{min-height:380px}.bar{grid-template-columns:6.5em minmax(0,1fr) 6.5em}}
+</style>
+</head>
+<body>
+<header class="band"><div class="wrap">
+<h1>Um espelho que gira 400 vezes por segundo: a luz medida dentro de uma sala</h1>
+<p class="lead">Em 1862, <b>Léon Foucault</b> mediu a velocidade da luz sem sair do <b>Observatório de Paris</b>. Um espelho girando a <b>400 voltas por segundo</b> mandava a luz por um caminho de <b>20 metros</b>, dobrado por cinco espelhos côncavos. Quando a luz voltava, o espelho já tinha girado um pouquinho, e a imagem na ocular se deslocava <b>0,7 mm</b>. Desse desvio saiu <b>298.000 km/s</b>, a 0,6% do valor moderno. Doze anos antes, em 1850, o mesmo truque tinha mostrado que a luz é mais lenta na água que no ar.</p>
+
+<div class="stage">
+ <div class="fig sky" id="scene"><canvas id="cv" aria-label="Vista de cima do experimento: fenda iluminada, lâmina de vidro, lente, espelho giratório e caminho de luz dobrado por espelhos côncavos, com o pulso de luz indo e voltando"></canvas></div>
+ <div class="panel">
+  <div class="seg" role="group" aria-label="Qual experimento">
+   <button id="m62" class="on" aria-pressed="true">1862: medir c no ar</button>
+   <button id="m50" aria-pressed="false">1850: ar contra água</button>
+  </div>
+  <div id="ocw"><canvas id="oc" aria-label="Escala da ocular em milímetros com a imagem da fenda deslocada"></canvas></div>
+  <p id="ocT">O que Foucault via na ocular</p>
+  <label for="rot">Rotação do espelho: <b id="rotv" style="color:var(--ink)">400</b> voltas por segundo</label>
+  <input type="range" id="rot" min="0" max="1000" step="1" value="400">
+  <div class="ctrls">
+   <button data-n="0">Parado</button>
+   <button data-n="400">400 (Foucault, 1862)</button>
+   <button data-n="800">800</button>
+   <button id="play" class="on" aria-pressed="true">Pausar</button>
+  </div>
+  <div class="rd">
+   <div><span id="l1">Ida e volta da luz (40 m)</span><b id="r1">—</b></div>
+   <div><span>O espelho gira nesse tempo</span><b id="r2">—</b></div>
+   <div><span>O feixe de volta se desvia</span><b id="r3">—</b></div>
+   <div><span id="l4">Desvio da imagem na ocular</span><b id="r4" style="color:var(--light)">—</b></div>
+  </div>
+  <p class="note" id="snote"></p>
+ </div>
+</div>
+</div></header>
+
+<section class="band alt"><div class="wrap">
+<h2>Quanto mais rápido o espelho, maior o desvio</h2>
+<p class="lead">O desvio cresce em linha reta com a rotação: dobrando as voltas por segundo, a imagem anda o dobro. A inclinação da reta depende só da velocidade da luz. Foucault girou o espelho a <b>400 voltas por segundo</b> e leu <b>0,7 mm</b> no micrômetro.</p>
+<div class="aux">
+ <div class="fig panel" id="curve" style="padding:0" aria-label="Gráfico do desvio da imagem em função da rotação do espelho; toque ou arraste para escolher a rotação"><svg id="cs"></svg></div>
+ <div class="panel">
+  <p style="font-size:15px">Toque ou arraste no gráfico para escolher a rotação: a cena de cima acompanha.</p>
+  <p style="font-size:15px">A reta azul usa a velocidade da luz atual; a tracejada, o valor de Fizeau, 313.000 km/s. A marca ocre é a leitura de Foucault. Veja de perto, a 400 voltas por segundo:</p>
+  <svg id="zoom" aria-label="Ampliação da escala entre 0,6 e 0,75 milímetro"></svg>
+  <p class="note">Entre a luz de Fizeau e a de Foucault há só 0,03 mm na ocular, um terço de uma divisão da mira. Por isso Foucault usou um micrômetro com traços a cada 0,1 mm e mediu a rotação com um relógio e um disco estroboscópico.</p>
+ </div>
+</div>
+</div></section>
+
+<section class="band"><div class="wrap">
+<h2>O raciocínio de Foucault, em três passos</h2>
+<div class="steps">
+ <div>
+  <svg viewBox="0 0 300 120" aria-hidden="true"><line x1="10" y1="60" x2="128" y2="60" stroke="#ffcf5c" stroke-width="3"/><g transform="rotate(-22 140 60)"><rect x="137" y="36" width="6" height="48" fill="#e9ecf5"/></g><path d="M140 60 L290 14" stroke="#ffcf5c" stroke-width="3"/><path d="M140 24 a36 36 0 0 1 30 14" fill="none" stroke="#a3abc2" stroke-width="1.5"/><path d="M170 38 l1 -9 l-8 4 z" fill="#a3abc2"/><text x="140" y="110" text-anchor="middle">espelho giratório</text><text x="12" y="48">luz da fenda</text></svg>
+  <h3>Um espelho que gira</h3>
+  <p>A luz do Sol, trazida por um heliostato, ilumina uma fenda com uma mira. Uma lente faz a imagem da fenda e o feixe bate num espelho plano que gira centenas de vezes por segundo, movido a ar comprimido. A cada volta, por um instante, o espelho aponta a luz para o caminho de medição.</p>
+ </div>
+ <div>
+  <svg viewBox="0 0 300 120" aria-hidden="true"><polyline points="20,60 80,16 140,104 200,16 260,104 290,60" fill="none" stroke="#7fe6ff" stroke-width="2"/><g fill="none" stroke="#e9ecf5" stroke-width="3"><path d="M72 10 q8 -4 16 0"/><path d="M132 110 q8 4 16 0"/><path d="M192 10 q8 -4 16 0"/><path d="M252 110 q8 4 16 0"/><path d="M294 52 q4 8 0 16"/></g><circle cx="20" cy="60" r="4" fill="#e9ecf5"/><text x="150" y="64" text-anchor="middle">20 m dobrados</text></svg>
+  <h3>Dobrar o caminho</h3>
+  <p>Cinco espelhos côncavos levavam o feixe em zigue-zague pela sala e o último o devolvia pelo mesmo trajeto. Ida e volta: 40 metros, que a luz faz em 133 bilionésimos de segundo. Espelhos côncavos mantêm o feixe concentrado, o que deixou Foucault usar um caminho tão curto.</p>
+ </div>
+ <div>
+  <svg viewBox="0 0 300 120" aria-hidden="true"><g stroke="#33405f"><line x1="30" y1="40" x2="270" y2="40"/></g><g stroke="#a3abc2"><line x1="40" y1="34" x2="40" y2="46"/><line x1="88" y1="34" x2="88" y2="46"/><line x1="136" y1="34" x2="136" y2="46"/><line x1="184" y1="34" x2="184" y2="46"/><line x1="232" y1="34" x2="232" y2="46"/></g><line x1="40" y1="18" x2="40" y2="62" stroke="#a3abc2" stroke-dasharray="3 3"/><rect x="171" y="18" width="5" height="44" fill="#7fe6ff"/><path d="M44 72 H168" stroke="#e3a86b" stroke-width="2"/><path d="M168 72 l-8 -5 v10 z" fill="#e3a86b"/><text x="106" y="92" text-anchor="middle">desvio s</text><text x="150" y="114" text-anchor="middle">c = 8π · N · D · r ÷ s</text></svg>
+  <h3>Ler o desvio</h3>
+  <p>Durante a viagem, que dura 2D ÷ c, o espelho gira um ângulo 2πN · 2D ÷ c, e o feixe refletido gira o dobro. A uma distância r do espelho, isso desloca a imagem de s = 8πNDr ÷ c. Medindo s, N, D e r, sai c = 8πNDr ÷ s.</p>
+ </div>
+</div>
+</div></section>
+
+<section class="band alt"><div class="wrap">
+<h2>Faça a conta você mesmo</h2>
+<p class="lead">c = 8π × voltas por segundo × caminho até o último espelho × distância até a mira ÷ desvio. Com os números de 1862: 8π × 400 × 20 m × 1,037 m ÷ 0,7 mm ≈ 298.000 km/s.</p>
+<div class="calc" style="margin-top:18px">
+ <div class="panel">
+  <div class="field"><label for="cN">Voltas por segundo do espelho <span class="v" id="cNv"></span></label><input type="range" id="cN" min="50" max="1000" step="1" value="400"></div>
+  <div class="field"><label for="cD">Caminho até o último espelho, D <span class="v" id="cDv"></span></label><input type="range" id="cD" min="1" max="40" step="0.1" value="20"></div>
+  <div class="field"><label for="cR">Distância do espelho giratório à mira, r <span class="v" id="cRv"></span></label><input type="range" id="cR" min="0.2" max="3" step="0.001" value="1.037"></div>
+  <div class="field"><label for="cS">Desvio medido na ocular, s <span class="v" id="cSv"></span></label><input type="range" id="cS" min="0.05" max="3" step="0.001" value="0.7"></div>
+  <label>Pontos de partida</label>
+  <div class="presets">
+   <button data-n="400" data-d="20" data-r="1.037" data-s="0.7">Foucault, 1862</button>
+   <button data-n="400" data-d="20" data-r="1.037" data-s="0.696">Com c moderno</button>
+   <button data-n="400" data-d="20" data-r="1.037" data-s="0.666">Se a luz fosse a de Fizeau</button>
+  </div>
+  <p class="note" style="margin-top:12px">As fontes dão 400 voltas por segundo, 20 m e 0,7 mm, mas não a distância r até a mira. O valor de 1,037 m foi reconstruído a partir desses números e do resultado de 298.000 km/s.</p>
+ </div>
+ <div class="res">
+  <div class="big" id="cOut">—</div>
+  <div class="bars">
+   <div class="bar"><span>Sua estimativa</span><i id="bEst"></i><em id="eEst"></em></div>
+   <div class="bar m"><span>Valor moderno</span><i id="bMod"></i><em>299.792 km/s</em></div>
+   <div class="bar f"><span>Fizeau, 1849</span><i id="bFiz"></i><em>~313.000 km/s</em></div>
+   <div class="bar b"><span>Bradley, 1729</span><i id="bBra"></i><em>~301.000 km/s</em></div>
+   <div class="bar h"><span>Rømer e Huygens, 1690</span><i id="bHuy"></i><em>~220.000 km/s</em></div>
+  </div>
+  <p id="err" style="font-size:17px"></p>
+  <div class="sum" id="sum"></div>
+  <p id="au"></p>
+ </div>
+</div>
+</div></section>
+
+<section class="band"><div class="wrap">
+<h2>Por que este experimento importou duas vezes</h2>
+<p><b>Em 1850</b>, a pergunta não era quanto vale c, e sim quem tinha razão sobre a natureza da luz. Se a luz fosse feita de partículas, como pensava Newton, ela andaria mais rápido na água; se fosse uma onda, mais devagar. Foucault pôs um tubo de 3 metros com água num dos braços e viu que a imagem que passava pela água se desviava mais: a luz era mais lenta ali. Era a resposta que Arago tinha pedido em 1838, e uma vitória da teoria ondulatória.</p>
+<p><b>Em 1862</b>, a pergunta virou astronômica. O valor de Fizeau, 313.000 km/s, combinado com a aberração de Bradley, dava uma distância Terra–Sol de cerca de 153 milhões de km. Le Verrier, diretor do Observatório, suspeitava pelos movimentos dos planetas que essa distância era menor. Foucault mediu 298.000 km/s e, na mesma nota à Academia, tirou dela a paralaxe do Sol: 8,86″ em vez dos 8,57″ usados até então, ou seja, o Sol a cerca de 148 milhões de km. O valor moderno é 8,794″, 149,6 milhões de km.</p>
+<p>A margem que Foucault declarou, ±500 km/s, acabou pequena demais: o valor real está 1.800 km/s acima. Ainda assim, foi a primeira medição de laboratório precisa a menos de 1%, e o espelho giratório virou o método de referência até Michelson, que o refinou nos Estados Unidos a partir de 1879.</p>
+<div class="tl">
+ <div><b>1834</b><p>Charles Wheatstone usa um espelho giratório para medir a duração de uma faísca elétrica e sugere usá-lo com a luz.</p></div>
+ <div><b>1838</b><p>François Arago propõe comparar a luz no ar e na água com espelhos giratórios, para decidir entre ondas e partículas.</p></div>
+ <div class="hi"><b>27 abr. 1850</b><p>Foucault vê que a luz é mais lenta na água. A nota é lida na Academia em 6 de maio. Fizeau e Breguet chegam ao mesmo resultado em 17 de junho.</p></div>
+ <div><b>1853</b><p>Foucault defende sua tese de doutorado sobre as velocidades da luz no ar e na água.</p></div>
+ <div class="hi"><b>22 set. 1862</b><p>Na Academia, Foucault anuncia 298.000 ± 500 km/s, medidos no Observatório de Paris, e a nova paralaxe do Sol. Os aparelhos são descritos em novembro.</p></div>
+ <div><b>1879</b><p>Albert Michelson, com um espelho giratório e um caminho de cerca de 600 m, obtém perto de 299.900 km/s.</p></div>
+</div>
+
+<div class="fix panel">
+ <h3>Valores conferidos e corrigidos</h3>
+ <ul>
+  <li><b>298.000 km/s é de 1862, não de 1850.</b> Muitos resumos juntam as duas datas. Em 1850 Foucault só comparou ar e água, sem dar um valor absoluto de c.</li>
+  <li><b>400 voltas por segundo, não por minuto.</b> A ficha do aparelho no Google Arts &amp; Culture (Musée des arts et métiers) diz “400 revolutions per minute”. A 400 por minuto o desvio seria de 0,012 mm, impossível de ler. O Observatório de Paris e as notas de Foucault dão 400 por segundo.</li>
+  <li><b>20 m é o caminho só de ida.</b> Ida e volta são 40 m, como diz o Observatório.</li>
+  <li><b>Quatro ou cinco espelhos?</b> O museu fala em quatro espelhos fixos; o Observatório, num trem de cinco espelhos côncavos. A cena desenha cinco.</li>
+  <li><b>A distância r até a mira</b> não aparece nas fontes consultadas. Usamos 1,037 m, o valor que torna coerentes 400 voltas/s, 20 m, 0,7 mm e 298.000 km/s.</li>
+  <li><b>No modo 1850</b>, o tubo de 3 m com água é histórico; o braço de 4 m e as 800 voltas por segundo são ilustrativos, escolhidos para dar desvios de 0,2 a 0,3 mm, como os relatados.</li>
+ </ul>
+</div>
+
+<h3 class="srch" style="margin:28px 0 4px">Fontes</h3>
+<ul class="src">
+ <li>L. Foucault, “Détermination expérimentale de la vitesse de la lumière; parallaxe du Soleil”, <i>Comptes rendus</i> 55, p. 501–503 (22 set. 1862), e “… description des appareils”, p. 792–796 (nov. 1862).</li>
+ <li><a href="https://celerite.observatoiredeparis.psl.eu/">La vitesse de la lumière: 350 ans de Rømer</a>, Observatoire de Paris – PSL</li>
+ <li><a href="https://en.wikipedia.org/wiki/Foucault%27s_measurements_of_the_speed_of_light">Foucault’s measurements of the speed of light</a>, Wikipedia</li>
+ <li><a href="https://artsandculture.google.com/asset/appareil-pour-la-mesure-de-la-vitesse-de-la-lumière/MQFI5A2gIBmZLQ">Appareil pour la mesure de la vitesse de la lumière</a>, Musée des arts et métiers no Google Arts &amp; Culture</li>
+ <li><a href="https://www.math.uwaterloo.ca/~rwoldfor/papers/sci-method/paperrev/node7.html">Foucault’s rotating mirror</a>, R. W. Oldford, Universidade de Waterloo</li>
+</ul>
+</div></section>
+
+<script>
+{
+const $=id=>document.getElementById(id);
+const fmt=(x,d)=>x.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
+const C=299792458,R=1.037,NW=4/3,CFIZ=313274e3,AB=20.445/206265,YR=365.25636*86400,RE=6378.137;
+const rot=$('rot'),reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let mode=1862,playing=!reduce,last=null;
+const N=()=>Number(rot.value);
+// geometria real de cada modo: caminhos de ida (lista de segmentos [comprimento m, índice])
+function realPaths(){return mode===1862?[{segs:null,total:20,col:'#7fe6ff'}]:[{segs:[[4,1]],col:'#e9ecf5',name:'ar'},{segs:[[1,1],[3,NW]],col:'#6fdc9c',name:'água'}]}
+const tauOf=p=>2*(p.segs?p.segs.reduce((a,[l,n])=>a+l*n,0):p.total)/C; // s
+const sOf=tau=>2*2*Math.PI*N()*tau*R; // m: 2Δθ·r
+function fit(c){const r=c.parentNode.getBoundingClientRect(),dpr=window.devicePixelRatio||1;c.width=r.width*dpr;c.height=r.height*dpr;c.getContext('2d').setTransform(dpr,0,0,dpr,0,0)}
+const cv=$('cv'),ctx=cv.getContext('2d'),sc=$('scene'),oc=$('oc'),octx=oc.getContext('2d');
+new ResizeObserver(()=>{fit(cv);drawScene()}).observe(sc);
+new ResizeObserver(()=>{fit(oc);drawOc()}).observe($('ocw'));
+const lab=(g,s,x,y,col,al)=>{g.font='13px Inter,sans-serif';g.lineWidth=4;g.strokeStyle='#0b0e17';g.textAlign=al||'left';g.fillStyle=col;g.strokeText(s,x,y);g.fillText(s,x,y);g.textAlign='left'};
+const stars=[];{let s=11;for(let i=0;i<70;i++){s=s*16807%2147483647;const x=s/2147483647;s=s*16807%2147483647;const y=s/2147483647;s=s*16807%2147483647;stars.push([x,y,.3+(s/2147483647)])}}
+// fases da animação: spin -> flight -> show
+let phase='spin',pt=0,phi=0;const TSPIN=1.1,TF=2.6,TSHOW=1.8;
+let G={};
+function geo(){
+ const W=sc.clientWidth,H=sc.clientHeight,nar=W<520;
+ const y0=H*.44,xS=nar?18:28,xP=xS+(nar?34:52),xL=xP+(nar?26:40),xR=xL+(nar?30:46),yE=y0+(nar?92:110);
+ const x0=xR+(nar?34:60),x1=W-(nar?20:34),yT=H*.12,yB=H*.80;
+ let paths;
+ if(mode===1862){const pts=[[xR,y0]];const n=4;for(let i=1;i<=n;i++)pts.push([x0+(x1-x0)*(i-1)/n,i%2?yT:yB]);pts.push([x1,(yT+yB)/2]);
+  const len=[];for(let i=1;i<pts.length;i++)len.push(Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]));const L=len.reduce((a,b)=>a+b);
+  paths=[{pts,segs:len.map(l=>[20*l/L,1]),col:'#7fe6ff'}];}
+ else{const ya=y0-H*.2,yw=y0+H*.2,xe=x1;const mw=[xR+(xe-xR)*.25,y0+(yw-y0)*.25];
+  paths=[{pts:[[xR,y0],[xe,ya]],segs:[[4,1]],col:'#e9ecf5',name:'ar'},{pts:[[xR,y0],mw,[xe,yw]],segs:[[1,1],[3,NW]],col:'#6fdc9c',name:'água',tube:[mw,[xe-10,yw-(yw-y0)*10/(xe-xR)]]}];}
+ const u=paths[0].pts[1];let ox=u[0]-xR,oy=u[1]-y0;if(mode===1850){ox=1;oy=0}
+ const ol=Math.hypot(ox,oy),nx=-1+ox/ol,ny=oy/ol,phi0=Math.atan2(ny,nx)+Math.PI/2;
+ G={W,H,nar,y0,xS,xP,xL,xR,yE,yT,yB,paths,phi0,K:mode===1862?150:400};
+}
+function posOn(p,tReal){ // posição do pulso no caminho de ida e volta
+ const segs=p.segs,pts=p.pts,n=segs.length;let t=tReal;
+ const seq=[];for(let i=0;i<n;i++)seq.push([i,1]);for(let i=n-1;i>=0;i--)seq.push([i,-1]);
+ for(const[i,d]of seq){const dt=segs[i][0]*segs[i][1]/C;if(t<=dt){const f=t/dt;const a=pts[d>0?i:i+1],b=pts[d>0?i+1:i];return{x:a[0]+(b[0]-a[0])*f,y:a[1]+(b[1]-a[1])*f,back:d<0}}t-=dt}
+ return null}
+function pTau(p){return 2*p.segs.reduce((a,[l,n])=>a+l*n,0)/C}
+function devDraw(p){return G.K*2*2*Math.PI*N()*pTau(p)} // ângulo do feixe de volta, ampliado
+function plateHit(d){const{xP,xR,y0}=G,t=(xR-xP)*Math.tan(d)/(1+Math.tan(d));return[xP+t,y0+t]}
+function drawScene(){
+ geo();const{W,H,nar,y0,xS,xP,xL,xR,yE,paths,phi0,K}=G;if(!W)return;ctx.clearRect(0,0,W,H);
+ for(const s of stars){ctx.fillStyle='rgba(233,236,245,.25)';ctx.fillRect(s[0]*W,s[1]*H,s[2],s[2])}
+ const tauMax=Math.max(...paths.map(pTau));
+ const tReal=phase==='flight'?pt/TF*tauMax:phase==='show'?tauMax*1.01:-1;
+ // trilho dos caminhos
+ for(const p of paths){ctx.strokeStyle='rgba(127,230,255,.13)';ctx.lineWidth=1;ctx.beginPath();p.pts.forEach((q,i)=>i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]));ctx.stroke();
+  if(p.tube){const[a,b]=p.tube,ang=Math.atan2(b[1]-a[1],b[0]-a[0]),l=Math.hypot(b[0]-a[0],b[1]-a[1]);ctx.save();ctx.translate(a[0],a[1]);ctx.rotate(ang);ctx.fillStyle='rgba(111,220,156,.16)';ctx.strokeStyle='rgba(111,220,156,.6)';ctx.fillRect(0,-8,l,16);ctx.strokeRect(0,-8,l,16);ctx.restore();lab(ctx,nar?'água, 3 m':'tubo com água, 3 m',(a[0]+b[0])/2,(a[1]+b[1])/2+28,'#6fdc9c','center')}}
+ // espelhos fixos
+ for(const p of paths){const e=p.pts.slice(1);e.forEach((q,i)=>{const prev=p.pts[i],next=p.pts[i+2];let dx=prev[0]-q[0],dy=prev[1]-q[1],l=Math.hypot(dx,dy);dx/=l;dy/=l;if(next){let ex=next[0]-q[0],ey=next[1]-q[1],m=Math.hypot(ex,ey);dx+=ex/m;dy+=ey/m;l=Math.hypot(dx,dy);dx/=l;dy/=l}
+  const tx=-dy,ty=dx,s=nar?11:14;ctx.strokeStyle='#e9ecf5';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(q[0]+tx*s,q[1]+ty*s);ctx.quadraticCurveTo(q[0]-dx*5,q[1]-dy*5,q[0]-tx*s,q[1]-ty*s);ctx.stroke();
+  if(p.tube&&!next&&p.name==='água')ctx.strokeStyle='#6fdc9c'})}
+ // pulsos
+ let active=false;
+ if(tReal>=0)for(const p of paths){const q=posOn(p,tReal);if(q){active=true;ctx.fillStyle=q.back?p.col:'#ffcf5c';ctx.beginPath();ctx.arc(q.x,q.y,4,0,7);ctx.fill();ctx.fillStyle=q.back?'rgba(127,230,255,.2)':'rgba(255,207,92,.2)';ctx.beginPath();ctx.arc(q.x,q.y,10,0,7);ctx.fill()}}
+ // feixe de entrada: fenda -> lâmina -> lente -> espelho
+ ctx.strokeStyle='rgba(255,207,92,.75)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(xS+6,y0);ctx.lineTo(xR,y0);ctx.stroke();
+ // feixes de volta (após o retorno)
+ for(const p of paths){const tau=pTau(p);if(tReal>=tau){const d=devDraw(p),h=plateHit(d);ctx.strokeStyle=p.col;ctx.globalAlpha=.9;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(xR,y0);ctx.lineTo(h[0],h[1]);ctx.lineTo(h[0],yE-8);ctx.stroke();ctx.globalAlpha=1;ctx.fillStyle=p.col;ctx.beginPath();ctx.arc(h[0],yE,4,0,7);ctx.fill()}}
+ // fenda e heliostato
+ ctx.fillStyle='#ffcf5c';ctx.fillRect(xS,y0-12,4,24);lab(ctx,'fenda',xS-6,y0-24,'#ffcf5c');
+ const g=ctx.createRadialGradient(xS-4,y0,1,xS-4,y0,18);g.addColorStop(0,'rgba(255,246,213,.9)');g.addColorStop(1,'rgba(255,207,92,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(xS-4,y0,18,0,7);ctx.fill();
+ // lâmina de vidro a 45°
+ ctx.strokeStyle='rgba(233,236,245,.7)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(xP-12,y0-12);ctx.lineTo(xP+12,y0+12);ctx.stroke();lab(ctx,'vidro',xP-12,y0+30,'#a3abc2','right');
+ // lente
+ ctx.strokeStyle='#5b9bff';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(xL,y0,4,16,0,0,7);ctx.stroke();lab(ctx,'lente',xL,y0-24,'#5b9bff','center');
+ // ocular / olho e marca de referência
+ ctx.strokeStyle='#a3abc2';ctx.lineWidth=1.5;ctx.beginPath();ctx.ellipse(xP+16,yE,24,8,0,0,7);ctx.stroke();
+ ctx.strokeStyle='#ffcf5c';ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(xP,yE-12);ctx.lineTo(xP,yE+12);ctx.stroke();ctx.setLineDash([]);
+ lab(ctx,'ocular',xP+16,yE+28,'#a3abc2','center');
+ // espelho giratório
+ if(phase==='spin'&&!reduce){const f=Math.min(1,pt/TSPIN),e=1-Math.pow(1-f,3);phi=phi0-4*Math.PI*(1-e)}
+ else if(tReal>=0){phi=phi0+K*2*Math.PI*N()*Math.min(tReal,tauMax)}
+ const ml=nar?13:17;ctx.strokeStyle='#e9ecf5';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(xR+Math.cos(phi)*ml,y0+Math.sin(phi)*ml);ctx.lineTo(xR-Math.cos(phi)*ml,y0-Math.sin(phi)*ml);ctx.stroke();
+ if(phase!=='spin'||reduce){ctx.strokeStyle='rgba(233,236,245,.28)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(xR+Math.cos(phi0)*ml,y0+Math.sin(phi0)*ml);ctx.lineTo(xR-Math.cos(phi0)*ml,y0-Math.sin(phi0)*ml);ctx.stroke()}
+ ctx.strokeStyle='rgba(163,171,194,.5)';ctx.lineWidth=1;ctx.beginPath();ctx.arc(xR,y0,ml+7,-2.2,-1);ctx.stroke();
+ lab(ctx,nar?'espelho':'espelho giratório',xR,y0+(nar?44:48),'#e9ecf5','center');
+ // textos
+ lab(ctx,nar?'vista de cima':'vista de cima, fora de escala',12,22,'#6b7591');
+ lab(ctx,`ângulos ampliados ${K}×`,12,40,'#6b7591');
+ if(mode===1862)lab(ctx,nar?'20 m em zigue-zague':'20 m dobrados por 5 espelhos côncavos',G.W-12,nar?G.H-34:G.H-14,'#a3abc2','right');
+ else{lab(ctx,'braço no ar, 4 m',G.W-12,paths[0].pts[1][1]-18,'#e9ecf5','right');lab(ctx,'braço com água, 4 m',G.W-12,paths[1].pts[2][1]+30,'#6fdc9c','right')}
+ const msg=phase==='spin'&&!reduce?'o espelho gira…':active?'câmera lenta: a luz viaja':'a luz voltou: o espelho já girou';
+ lab(ctx,msg,12,G.H-14,'#ffcf5c');
+}
+function drawOc(){
+ const W=oc.parentNode.clientWidth,H=oc.parentNode.clientHeight;if(!W)return;octx.clearRect(0,0,W,H);
+ const MAX=mode===1862?2:.6,L=24,Rr=W-18,X=v=>L+(Rr-L)*v/MAX,yb=H-34;
+ octx.strokeStyle='#33405f';octx.lineWidth=1;octx.beginPath();octx.moveTo(L,yb);octx.lineTo(Rr,yb);octx.stroke();
+ const st=mode===1862?.1:.05;for(let v=0;v<=MAX+1e-9;v+=st){const big=Math.abs(v/(st*5)-Math.round(v/(st*5)))<1e-6;octx.strokeStyle=big?'#a3abc2':'#4a5577';octx.beginPath();octx.moveTo(X(v),yb-(big?10:5));octx.lineTo(X(v),yb+(big?10:5));octx.stroke();if(big)lab(octx,fmt(v,mode===1862?1:2).replace(/,0$/,''),X(v),yb+26,'#a3abc2','center')}
+ lab(octx,'mm',Rr,14,'#6b7591','right');
+ octx.strokeStyle='#ffcf5c';octx.setLineDash([3,3]);octx.beginPath();octx.moveTo(X(0),8);octx.lineTo(X(0),yb);octx.stroke();octx.setLineDash([]);
+ const imgs=realPaths().map(p=>({s:sOf(tauOf(p))*1000,col:p.col}));
+ if(mode===1850){const sp=sOf((2+2*3*(1/NW))/C)*1000;octx.strokeStyle='rgba(111,220,156,.7)';octx.setLineDash([4,4]);octx.strokeRect(X(sp)-3,14,6,yb-24);octx.setLineDash([]);lab(octx,'se fossem partículas',X(sp),12,'#6fdc9c',X(sp)>W/2?'right':'left')}
+ for(const im of imgs){const x=X(Math.min(im.s,MAX));const g=octx.createLinearGradient(x-9,0,x+9,0);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(.5,im.col);g.addColorStop(1,'rgba(0,0,0,0)');octx.fillStyle=g;octx.fillRect(x-9,18,18,yb-26);octx.fillStyle=im.col;octx.fillRect(x-1.5,18,3,yb-26)}
+}
+function readouts(){
+ const n=N();$('rotv').textContent=fmt(n,0);
+ const ps=realPaths(),tau=tauOf(ps[0]),dth=2*Math.PI*n*tau,deg=dth*180/Math.PI;
+ const ang=a=>a*206265<100?fmt(a*206265,1)+'″':fmt(a*180/Math.PI,3)+'°';
+ if(mode===1862){$('l1').textContent='Ida e volta da luz (40 m)';$('r1').textContent=fmt(tau*1e9,1)+' ns';$('l4').textContent='Desvio da imagem na ocular';$('r4').textContent=fmt(sOf(tau)*1000,3)+' mm';
+  $('ocT').innerHTML=n===0?'<b>Espelho parado:</b> a imagem da fenda volta exatamente sobre a marca.':`<b>Imagem desviada ${fmt(sOf(tau)*1000,2)} mm.</b> Com ${fmt(n,0)} lampejos por segundo, ela parece parada.`;
+  $('snote').textContent='A cena usa o valor moderno de c, por isso 400 voltas por segundo dão 0,696 mm; Foucault leu 0,7 mm. A cena está fora de escala e os ângulos do espelho e do feixe foram ampliados 150 vezes: na realidade, enquanto a luz viaja, o espelho gira só 69 segundos de arco.';}
+ else{const tw=tauOf(ps[1]);$('l1').textContent='Ida e volta no braço de ar (8 m)';$('r1').textContent=fmt(tau*1e9,1)+' ns';$('l4').textContent='Desvio: ar | água';$('r4').innerHTML=`${fmt(sOf(tau)*1000,2)} <i style="font-style:normal;color:var(--water)">| ${fmt(sOf(tw)*1000,2)} mm</i>`;
+  $('ocT').innerHTML=n===0?'<b>Espelho parado:</b> as duas imagens coincidem.':'<b>A imagem verde, que passou pela água, desvia mais:</b> a luz levou mais tempo, logo é mais lenta na água. Foucault notou mesmo que essa imagem saía esverdeada.';
+  $('snote').textContent='Modo 1850 com valores ilustrativos: braços de 4 m, tubo de 3 m com água (índice 1,33) e ângulos ampliados 400 vezes. A caixa tracejada mostra onde a imagem cairia se a luz fosse feita de partículas, mais rápidas na água.';}
+ $('r2').textContent=ang(dth);$('r3').textContent=ang(2*dth);
+ drawOc();
+}
+function step(dt){pt+=dt;const lim=phase==='spin'?TSPIN:phase==='flight'?TF:TSHOW;if(pt>=lim){pt=0;phase=phase==='spin'?'flight':phase==='flight'?'show':'spin'}}
+$('play').onclick=()=>{playing=!playing;$('play').textContent=playing?'Pausar':'Continuar';$('play').classList.toggle('on',playing);$('play').setAttribute('aria-pressed',playing)};
+const setN=v=>{rot.value=Math.max(0,Math.min(1000,Math.round(v)));readouts();curve();drawScene()};
+rot.oninput=()=>setN(Number(rot.value));
+document.querySelectorAll('.stage .ctrls button[data-n]').forEach(b=>b.onclick=()=>setN(Number(b.dataset.n)));
+const setMode=m=>{mode=m;$('m62').classList.toggle('on',m===1862);$('m50').classList.toggle('on',m===1850);$('m62').setAttribute('aria-pressed',m===1862);$('m50').setAttribute('aria-pressed',m===1850);phase='spin';pt=0;if(reduce){phase='show'}setN(m===1862?400:800)};
+$('m62').onclick=()=>setMode(1862);$('m50').onclick=()=>setMode(1850);
+function frame(now){const dt=last===null?0:Math.min(.05,(now-last)/1000);last=now;if(playing)step(dt);drawScene();requestAnimationFrame(frame)}
+if(reduce){phase='show';$('play').textContent='Continuar';$('play').classList.remove('on');$('play').setAttribute('aria-pressed','false')}
+requestAnimationFrame(frame);
+// gráfico do desvio
+const cs=$('cs'),cb=$('curve'),NM=1000,SM=2;let CL=46,CR=16;
+const s62=(n,c)=>8*Math.PI*n*20*R/c*1000;
+function curve(){
+ const W=cb.clientWidth,H=cb.clientHeight;if(!W)return;const T0=24,B0=40,nar=W<520;
+ const X=v=>CL+(W-CL-CR)*v/NM,Y=s=>T0+(H-T0-B0)*(1-s/SM);
+ const cur=N(),sc_=s62(cur,C);
+ cs.innerHTML=[0,.5,1,1.5,2].map(s=>`<line x1="${CL}" x2="${W-CR}" y1="${Y(s)}" y2="${Y(s)}" stroke="${s?'#1e2538':'#33405f'}"/><text x="${CL-8}" y="${Y(s)+4}" text-anchor="end">${fmt(s,1).replace(/,0$/,'')}</text>`).join('')+
+  [0,200,400,600,800,1000].map(v=>`<text x="${X(v)}" y="${H-B0+18}" text-anchor="middle">${nar&&v%400&&v?'':fmt(v,0)}</text>`).join('')+
+  `<text x="${W-CR}" y="${H-6}" text-anchor="end">${nar?'voltas/s':'voltas do espelho por segundo'}</text><text x="${CL}" y="${T0-9}">desvio na ocular (mm)</text>`+
+  `<line x1="${X(0)}" y1="${Y(0)}" x2="${X(NM)}" y2="${Y(s62(NM,CFIZ))}" stroke="#8d9ac0" stroke-width="1.5" stroke-dasharray="5 5"/>`+
+  `<line x1="${X(0)}" y1="${Y(0)}" x2="${X(NM)}" y2="${Y(s62(NM,C))}" stroke="#7fe6ff" stroke-width="2.5"/>`+
+  `<circle cx="${X(400)}" cy="${Y(.7)}" r="6" fill="none" stroke="#e3a86b" stroke-width="2.5"/>${nar?'':`<text x="${X(400)-12}" y="${Y(.7)-12}" text-anchor="end" style="fill:#e3a86b">Foucault: 400 voltas/s, 0,7 mm</text>`}`+
+  `<line x1="${X(cur)}" x2="${X(cur)}" y1="${T0}" y2="${Y(0)}" stroke="#ffcf5c" stroke-width="1.5"/><circle cx="${X(cur)}" cy="${Y(sc_)}" r="6" fill="#ffcf5c" stroke="#0b0e17" stroke-width="2"/>`;
+}
+new ResizeObserver(curve).observe(cb);
+const pick=e=>{const r=cb.getBoundingClientRect(),v=(e.clientX-r.left-CL)/(r.width-CL-CR)*NM;setN(v)};
+let drag=false;cb.addEventListener('pointerdown',e=>{drag=true;cb.setPointerCapture(e.pointerId);pick(e)});cb.addEventListener('pointermove',e=>{if(drag)pick(e)});cb.addEventListener('pointerup',()=>drag=false);cb.addEventListener('pointercancel',()=>drag=false);
+// lupa da escala a 400 voltas/s
+function zoom(){const z=$('zoom'),W=z.clientWidth||300,H=120,a=.6,b=.76,X=v=>16+(W-32)*(v-a)/(b-a),y=58;
+ const pts=[[s62(400,CFIZ),'Fizeau','#8d9ac0',-1],[.7,'Foucault','#e3a86b',1],[s62(400,C),'c moderno','#7fe6ff',-1]];
+ let h=`<line x1="16" x2="${W-16}" y1="${y}" y2="${y}" stroke="#33405f"/>`;
+ for(let v=.6;v<=.7601;v+=.01){const big=Math.round(v*100)%5===0;h+=`<line x1="${X(v)}" x2="${X(v)}" y1="${y-(big?8:4)}" y2="${y+(big?8:4)}" stroke="${big?'#a3abc2':'#4a5577'}"/>`;if(big)h+=`<text x="${X(v)}" y="${y+24}" text-anchor="middle">${fmt(v,2)}</text>`}
+ h+=`<text x="${W-16}" y="${y+44}" text-anchor="end">mm</text>`;
+ const lay=[[-16,'end',-4],[-16,'start',4],[-38,'end',-4]];pts.forEach(([v,t,c],i)=>{const[dy,an,dx]=lay[i];h+=`<line x1="${X(v)}" x2="${X(v)}" y1="${y}" y2="${y+dy-2}" stroke="${c}" stroke-width="2"/><text x="${X(v)+dx}" y="${y+dy}" text-anchor="${an}" style="fill:${c}">${t}</text>`});
+ z.innerHTML=h}
+new ResizeObserver(zoom).observe($('zoom'));
+// calculadora
+const cN=$('cN'),cD=$('cD'),cR=$('cR'),cS=$('cS');
+function calc(){
+ const n=+cN.value,d=+cD.value,r=+cR.value,s=+cS.value/1000,c=8*Math.PI*n*d*r/s,ck=c/1000,pct=(c/C-1)*100;
+ $('cNv').textContent=fmt(n,0);$('cDv').textContent=fmt(d,1)+' m';$('cRv').textContent=fmt(r,3)+' m';$('cSv').textContent=fmt(s*1000,3)+' mm';
+ $('cOut').innerHTML=fmt(Math.round(ck/1000)*1000,0)+' <span class="unit">km/s</span>';
+ const mx=Math.max(ck,313274)*1.05,w=(id,v)=>$(id).style.width=Math.min(100,v/mx*100)+'%';
+ w('bEst',ck);w('bMod',C/1000);w('bFiz',313274);w('bBra',301000);w('bHuy',220000);
+ $('eEst').textContent=fmt(Math.round(ck),0)+' km/s';
+ $('err').textContent=Math.abs(pct)<.2?'Praticamente o valor moderno.':`${fmt(Math.abs(pct),1)}% ${pct<0?'abaixo':'acima'} do valor moderno.`;
+ const tr=2*d/c,dth=2*Math.PI*n*tr;
+ $('sum').innerHTML=`<div>c = 8π × ${fmt(n,0)} × ${fmt(d,1)} m × ${fmt(r,3)} m ÷ ${fmt(s*1000,3)} mm = ${fmt(Math.round(ck),0)} km/s</div><div>ida e volta: 2 × ${fmt(d,1)} m ÷ c = ${fmt(tr*1e9,1)} ns</div><div>o espelho gira ${fmt(dth*206265,1)}″ e o feixe, ${fmt(2*dth*206265,1)}″</div>`;
+ const v=ck*Math.tan(AB),au=v*YR/(2*Math.PI),par=RE/au*206265;
+ $('au').innerHTML=`Com a aberração de Bradley (20,445″), essa velocidade põe o Sol a <b>${fmt(au/1e6,1)} milhões de km</b>, uma paralaxe solar de <b>${fmt(par,2)}″</b>. Foucault tirou 8,86″; antes se usava 8,57″; hoje, 8,794″.`;
+}
+[cN,cD,cR,cS].forEach(e=>e.oninput=calc);
+document.querySelectorAll('.presets button').forEach(b=>b.onclick=()=>{cN.value=b.dataset.n;cD.value=b.dataset.d;cR.value=b.dataset.r;cS.value=b.dataset.s;calc()});
+calc();readouts();
+}
+</script>
+</body>
+</html>
