@@ -121,7 +121,7 @@ const prev=document.getElementById('prev'),next=document.getElementById('next');
 let ro=null,cur=null;
 function fit(){
   try{const d=frame.contentDocument;if(!d||!d.body)return;
-    const h=Math.max(d.documentElement.scrollHeight,d.body.scrollHeight);
+    const h=Math.ceil(Math.max(d.body.scrollHeight,d.body.getBoundingClientRect().height));
     if(h>0)frame.style.height=h+'px';}catch(e){}
 }
 frame.addEventListener('load',()=>{
